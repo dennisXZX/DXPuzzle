@@ -1,5 +1,6 @@
 package com.dennisxiao.dxpuzzle;
 
+import android.media.MediaPlayer;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import java.util.Arrays;
@@ -14,7 +15,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +22,22 @@ public class MainActivity extends AppCompatActivity {
 
     // create a local variable for identifying the class where the log statements come from
     private final static String LOG_TAG = MainActivity.class.getSimpleName();
+
+    // button click sound resource
+    MediaPlayer buttonPlayer;
+
+    // create an listener for the button mediaPlayer
+    private MediaPlayer.OnCompletionListener mCompletionListener =  new MediaPlayer.OnCompletionListener(){
+
+        @Override
+        public void onCompletion(MediaPlayer mediaPlayer) {
+
+            if(buttonPlayer != null){
+                buttonPlayer.release();
+                buttonPlayer = null;
+            }
+        }
+    };
 
     // ImageButton for displaying the puzzle image
     private ImageButton ib_00;
@@ -129,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         ib_22.setOnClickListener(puzzleButtonOnClickListener);
 
         // shuffle the image order
-        random();
+//        random();
 
         // after shuffling the array, set images to the ImageViews
         ib_00.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[0]], null));
@@ -162,6 +178,11 @@ public class MainActivity extends AppCompatActivity {
                 ib_20.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[6]], null));
                 ib_21.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[7]], null));
                 ib_22.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[8]], null));
+
+                // play a sound and release it when finished
+                buttonPlayer = MediaPlayer.create(MainActivity.this, R.raw.restart);
+                buttonPlayer.start();
+                buttonPlayer.setOnCompletionListener(mCompletionListener);
 
             }
         });
@@ -238,6 +259,11 @@ public class MainActivity extends AppCompatActivity {
         // check if the clicked button is next to the blank button
         if ((distanceX == 0 && distanceY == 1) || (distanceX == 1 && distanceY == 0)) {
 
+            // play a sound and release it when finished
+            buttonPlayer = MediaPlayer.create(MainActivity.this, R.raw.button_click_move);
+            buttonPlayer.start();
+            buttonPlayer.setOnCompletionListener(mCompletionListener);
+
             // find the clicked ImageButton
             ImageButton clickedButton = (ImageButton) findViewById(clickImageBtnID);
             // set the clicked button to invisible
@@ -265,6 +291,12 @@ public class MainActivity extends AppCompatActivity {
             gameFinish();
 
         }else { // alert the users if they are not clicking images next to the blank ImageButton
+
+            // play a sound and release it when finished
+            buttonPlayer = MediaPlayer.create(MainActivity.this, R.raw.button_click_nomove);
+            buttonPlayer.start();
+            buttonPlayer.setOnCompletionListener(mCompletionListener);
+
             Toast.makeText(MainActivity.this, "Please click on image next to the blank", Toast.LENGTH_SHORT).show();
         }
     }
@@ -317,6 +349,7 @@ public class MainActivity extends AppCompatActivity {
         
         // game is finished
         if(gameFinish){
+
             timeSwitch = false;
 
             // make all the buttons un-clickable
@@ -346,6 +379,7 @@ public class MainActivity extends AppCompatActivity {
 
             builder.create();
             builder.show();
+
         }
 
     } // end of gameFinish()
