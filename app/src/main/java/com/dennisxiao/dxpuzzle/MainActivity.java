@@ -28,14 +28,9 @@ public class MainActivity extends AppCompatActivity {
 
     // create an listener for the button mediaPlayer
     private MediaPlayer.OnCompletionListener mCompletionListener =  new MediaPlayer.OnCompletionListener(){
-
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {
-
-            if(buttonPlayer != null){
-                buttonPlayer.release();
-                buttonPlayer = null;
-            }
+            Utility.releaseMediaResource(mediaPlayer);
         }
     };
 
@@ -158,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
         ib_21.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[7]], null));
         ib_22.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[8]], null));
 
+        // reshuffle the girds when the restart button is clicked
         btn_restart.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -187,6 +183,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    } // end of onCreate()
+
+    // MediaPlayer resource should be released when a user is no longer within the app
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // release MediaPlayer resource
+        Utility.releaseMediaResource(buttonPlayer);
     }
 
     // create an onclick listener for puzzle button
@@ -383,4 +388,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
     } // end of gameFinish()
+
 }
