@@ -207,6 +207,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             @Override
             public void onClick(View view) {
 
+                // reset the time
+                time = 0;
+
                 // get a random image
                 imageId = ImageGrid.getImageGrid();
 
