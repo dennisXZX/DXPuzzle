@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "255679212033",
+    "project_id": "dxpuzzle"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255679212033:android:96289533f942ef70",
+        "android_client_info": {
+          "package_name": "com.dennisxiao.dxpuzzle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "255679212033-fef77dv9huriu6h4ma3put13grk1fqmd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dennisxiao.dxpuzzle",
+            "certificate_hash": "C746C5BCAA9B6F8AFC19D9111F2FEF51C9590C2A"
+          }
+        },
+        {
+          "client_id": "255679212033-k0veoi6hi82nfma0f5adk11f8f6os1sf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzjGxVJaLO4HSEyjnMU4nBha8TwnPOC0M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

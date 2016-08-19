@@ -1,6 +1,8 @@
 package com.dennisxiao.dxpuzzle;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import java.util.Arrays;
@@ -18,13 +20,28 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.common.api.Status;
+
+public class MainActivity extends AppCompatActivity implements OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     // create a local variable for identifying the class where the log statements come from
     private final static String LOG_TAG = MainActivity.class.getSimpleName();
 
+    /* Request code used to invoke sign in user interactions. */
+    private static final int RC_SIGN_IN = 9001;
+
     // button click sound resource
-    MediaPlayer buttonPlayer;
+    private MediaPlayer buttonPlayer;
 
     // create an listener for the button mediaPlayer
     private MediaPlayer.OnCompletionListener mCompletionListener =  new MediaPlayer.OnCompletionListener(){
@@ -33,6 +50,12 @@ public class MainActivity extends AppCompatActivity {
             Utility.releaseMediaResource(mediaPlayer);
         }
     };
+
+    // Button for Google sign in
+    private SignInButton mSignInButton;
+    private Button mSignOutButton;
+    private TextView mStatus;
+    private GoogleApiClient mGoogleApiClient;
 
     // ImageButton for displaying the puzzle image
     private ImageButton ib_00;
@@ -82,6 +105,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Google sign in / sign out
+        mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        mSignOutButton = (Button)findViewById(R.id.sign_out_button);
+        mStatus = (TextView) findViewById(R.id.sign_in_status);
+        mSignInButton.setOnClickListener(this);
+        mSignOutButton.setOnClickListener(this);
+
+        // by default hide the sign out button
+        findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
         // initialize the game
         initGame();
 
@@ -111,6 +157,14 @@ public class MainActivity extends AppCompatActivity {
         }.start(); // end of Thread()
 
     } // end of onCreate()
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // MediaPlayer resource should be released when a user is no longer within the app
+        Utility.releaseMediaResource(buttonPlayer);
+    }
 
     // initialize the game
     private void initGame() {
@@ -184,15 +238,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     } // end of onCreate()
-
-    // MediaPlayer resource should be released when a user is no longer within the app
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        // release MediaPlayer resource
-        Utility.releaseMediaResource(buttonPlayer);
-    }
 
     // create an onclick listener for puzzle button
     View.OnClickListener puzzleButtonOnClickListener = new OnClickListener() {
@@ -389,4 +434,70 @@ public class MainActivity extends AppCompatActivity {
 
     } // end of gameFinish()
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.sign_in_button:
+                signIn();
+                break;
+            case R.id.sign_out_button:
+                signOut();
+                break;
+        }
+    } // end of onClick()
+
+    private void signIn() {
+        // initialize a sign in intent
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void signOut() {
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+
+                        // hide the sign out button
+                        findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+                        findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+
+                        mStatus.setText("Bye!");
+                    }
+                });
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d(LOG_TAG, "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+            mStatus.setText("Welcome " + acct.getDisplayName());
+
+            // display the sign out button
+            findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+            // hide the sign in button
+            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            
+        } else {
+            // Signed out, show unauthenticated UI.
+        }
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
 }
