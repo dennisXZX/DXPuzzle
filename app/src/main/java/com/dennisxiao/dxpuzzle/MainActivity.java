@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         public void handleMessage(Message msg) {
             if(msg.what == 1){
                 String time = (String) msg.obj;
-                puzzleTime.setText(time);
+                puzzleTime.setText("Timer: " + time);
             }
         }
     };
@@ -478,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
             // hide the sign in button
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            
+
         } else {
             // Signed out, show unauthenticated UI.
         }
