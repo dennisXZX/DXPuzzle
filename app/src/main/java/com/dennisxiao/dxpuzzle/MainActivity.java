@@ -25,11 +25,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -40,9 +38,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     /* Request code used to invoke sign in user interactions. */
     private static final int RC_SIGN_IN = 9001;
 
-    // button click sound resource
-    private MediaPlayer buttonPlayer;
-
     // create an listener for the button mediaPlayer
     private MediaPlayer.OnCompletionListener mCompletionListener =  new MediaPlayer.OnCompletionListener(){
         @Override
@@ -51,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         }
     };
 
-    // Button for Google sign in
+    // Google sign in resources
     private SignInButton mSignInButton;
     private Button mSignOutButton;
     private TextView mStatus;
@@ -68,9 +63,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private ImageButton ib_21;
     private ImageButton ib_22;
 
-    // TextView for displaying puzzle time
+    // other resources
     private TextView puzzleTime;
     private Button btn_restart;
+    private Button btn_leaderboard;
+    private MediaPlayer buttonPlayer;
 
     // initialize the width and height of the puzzle square
     private int squareWidth = 3;
@@ -87,16 +84,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private int[] imageId = ImageGrid.getImageGrid();
 
     // initialize variables for recording time
-    private boolean timeSwitch = true;
-
+    private boolean timeRun = true;
     private int time = 0;
 
+    // create a handler to handle displaying the time
     private Handler mHandler = new Handler(){
         public void handleMessage(Message msg) {
-            if(msg.what == 1){
-                String time = (String) msg.obj;
-                puzzleTime.setText("Timer: " + time);
-            }
+            String time = (String) msg.obj;
+            puzzleTime.setText("Timer: " + time);
         }
     };
 
@@ -135,13 +130,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         new Thread(){
             public void run() {
 
-                time = 0;
-
-                while(timeSwitch == true){
+                while(timeRun == true){
                     String strTime = time + "";
+                    // create a Message instance
                     Message msg = Message.obtain();
-                    msg.what = 1;
+                    // store the time
                     msg.obj = strTime;
+                    // send the data to handler
                     mHandler.sendMessage(msg);
 
                     try {
@@ -400,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         // game is finished
         if(gameFinish){
 
-            timeSwitch = false;
+            timeRun = false;
 
             // make all the buttons un-clickable
             ib_00.setClickable(false);
