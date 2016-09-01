@@ -53,21 +53,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private GoogleApiClient mGoogleApiClient;
 
     // ImageButton for displaying the puzzle image
-    private ImageButton ib_00;
-    private ImageButton ib_01;
-    private ImageButton ib_02;
-    private ImageButton ib_10;
-    private ImageButton ib_11;
-    private ImageButton ib_12;
-    private ImageButton ib_20;
-    private ImageButton ib_21;
-    private ImageButton ib_22;
+    private ImageButton ib_00, ib_01, ib_02,
+                         ib_10, ib_11, ib_12,
+                         ib_20, ib_21, ib_22;
 
     // other resources
     private TextView puzzleTime;
-    private Button btn_restart;
-    private Button btn_ranking;
-    private Button btn_cheat;
+    private Button btn_restart, btn_ranking, btn_cheat;
     private MediaPlayer buttonPlayer;
 
     // initialize the width and height of the puzzle square
@@ -237,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 // after shuffling the array, set images to the ImageViews
                 displayGrids(imageId);
 
-                // make all the buttons un-clickable
+                // make all the buttons clickable
                 ib_00.setClickable(true);
                 ib_01.setClickable(true);
                 ib_02.setClickable(true);
@@ -565,7 +557,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         }
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -581,4 +572,5 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
 }
