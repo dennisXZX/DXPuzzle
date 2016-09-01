@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     // other resources
     private TextView puzzleTime;
     private Button btn_restart;
-    private Button btn_leaderboard;
+    private Button btn_ranking;
+    private Button btn_cheat;
     private MediaPlayer buttonPlayer;
 
     // initialize the width and height of the puzzle square
@@ -85,7 +86,38 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     // initialize variables for recording time
     private boolean timeRun = true;
+
+    // record the time of the game
     private int time = 0;
+
+    // keep track of if the game should finish
+    boolean gameFinish;
+
+    // create a thread to record time
+    private Thread gameTimeThread = new Thread(){
+
+        public void run() {
+
+            while(true){
+                String strTime = time + "";
+                // create a Message instance
+                Message msg = Message.obtain();
+                // store the time
+                msg.obj = strTime;
+                // send the data to handler
+                mHandler.sendMessage(msg);
+
+                try {
+                    Thread.sleep(1000);
+                    time++;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        } // end of run()
+
+    }; // end of Thread()
 
     // create a handler to handle displaying the time
     private Handler mHandler = new Handler(){
@@ -126,30 +158,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         // initialize the game
         initGame();
 
-        // create an anonymous thread to record time
-        new Thread(){
-            public void run() {
-
-                while(timeRun == true){
-                    String strTime = time + "";
-                    // create a Message instance
-                    Message msg = Message.obtain();
-                    // store the time
-                    msg.obj = strTime;
-                    // send the data to handler
-                    mHandler.sendMessage(msg);
-
-                    try {
-                        Thread.sleep(1000);
-                        time++;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            } // end of run()
-
-        }.start(); // end of Thread()
+        // start the thread
+        gameTimeThread.start();
 
     } // end of onCreate()
 
@@ -166,6 +176,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
         puzzleTime = (TextView) findViewById(R.id.puzzleTime);
         btn_restart = (Button) findViewById(R.id.btn_reset);
+        btn_ranking = (Button) findViewById(R.id.btn_ranking);
+        btn_cheat = (Button) findViewById(R.id.btn_cheating);
 
         ib_00 = (ImageButton) findViewById(R.id.ib_00_00);
         ib_01 = (ImageButton) findViewById(R.id.ib_00_01);
@@ -189,48 +201,86 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         ib_22.setOnClickListener(puzzleButtonOnClickListener);
 
         // shuffle the image order
-//        random();
+        random();
 
         // after shuffling the array, set images to the ImageViews
-        ib_00.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[0]], null));
-        ib_01.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[1]], null));
-        ib_02.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[2]], null));
-        ib_10.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[3]], null));
-        ib_11.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[4]], null));
-        ib_12.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[5]], null));
-        ib_20.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[6]], null));
-        ib_21.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[7]], null));
-        ib_22.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[8]], null));
+        displayGrids(imageId);
 
         // reshuffle the girds when the restart button is clicked
         btn_restart.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                // reset the time
+                // reset the game
                 time = 0;
+                timeRun = true;
+                gameFinish = false;
+                puzzleTime.setText("Timer: 0");
+                puzzleTime.setVisibility(View.VISIBLE);
 
                 // get a random image
                 imageId = ImageGrid.getImageGrid();
+
+                // reset the blank pos and blank image id
+                blankPos = 8;
+                blankImgId = R.id.ib_02_02;
+
+                // reset the image order
+                imageOrder = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
+
+                // reset the grid visibility
+                resetGridVisibility();
 
                 // shuffle the image order
                 random();
 
                 // after shuffling the array, set images to the ImageViews
-                ib_00.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[0]], null));
-                ib_01.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[1]], null));
-                ib_02.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[2]], null));
-                ib_10.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[3]], null));
-                ib_11.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[4]], null));
-                ib_12.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[5]], null));
-                ib_20.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[6]], null));
-                ib_21.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[7]], null));
-                ib_22.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[8]], null));
+                displayGrids(imageId);
+
+                // make all the buttons un-clickable
+                ib_00.setClickable(true);
+                ib_01.setClickable(true);
+                ib_02.setClickable(true);
+                ib_10.setClickable(true);
+                ib_11.setClickable(true);
+                ib_12.setClickable(true);
+                ib_20.setClickable(true);
+                ib_21.setClickable(true);
+                ib_22.setClickable(true);
 
                 // play a sound and release it when finished
                 buttonPlayer = MediaPlayer.create(MainActivity.this, R.raw.restart);
                 buttonPlayer.start();
                 buttonPlayer.setOnCompletionListener(mCompletionListener);
+
+            }
+        });
+
+        // display a ranking when ranking button is clicked
+        btn_ranking.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(LOG_TAG, "Ranking button is clicked.");
+            }
+        });
+
+        // re-organize the image when cheat button is clicked
+        btn_cheat.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // reset the blank pos and blank image id
+                blankPos = 8;
+                blankImgId = R.id.ib_02_02;
+
+                // reset the image order
+                imageOrder = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
+
+                // reset grid visibility
+                resetGridVisibility();
+
+                // set images to the grids
+                displayGrids(imageId);
 
             }
         });
@@ -382,10 +432,40 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         imageOrder[ran2] = temp;
     }
 
+    // this method resets all grids visibility
+    private void resetGridVisibility(){
+        ib_00.setVisibility(View.VISIBLE);
+        ib_01.setVisibility(View.VISIBLE);
+        ib_02.setVisibility(View.VISIBLE);
+        ib_10.setVisibility(View.VISIBLE);
+        ib_11.setVisibility(View.VISIBLE);
+        ib_12.setVisibility(View.VISIBLE);
+        ib_20.setVisibility(View.VISIBLE);
+        ib_21.setVisibility(View.VISIBLE);
+        ib_22.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * set images to all the grids
+     *
+     * @param imageId an int array holding all the images
+     */
+    private void displayGrids(int[] imageId){
+        ib_00.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[0]], null));
+        ib_01.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[1]], null));
+        ib_02.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[2]], null));
+        ib_10.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[3]], null));
+        ib_11.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[4]], null));
+        ib_12.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[5]], null));
+        ib_20.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[6]], null));
+        ib_21.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[7]], null));
+        ib_22.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[8]], null));
+    }
+
     // check if the game is finished
     private void gameFinish() {
 
-        boolean gameFinish = true;
+        gameFinish = true;
         
         // iterate through each grid to check if all the images are in the right places
         for (int i=0; i<9; i++) {
@@ -410,6 +490,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             ib_20.setClickable(false);
             ib_21.setClickable(false);
             ib_22.setClickable(false);
+
+            // hide the time
+            puzzleTime.setVisibility(View.INVISIBLE);
 
             // display the last hidden piece of the puzzle
             ib_22.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[8], null));

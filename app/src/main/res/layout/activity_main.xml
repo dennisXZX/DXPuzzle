@@ -135,11 +135,19 @@
             />
 
         <Button
-            android:id="@+id/btn_leaderboard"
+            android:id="@+id/btn_ranking"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="LEADERBOARD"
+            android:text="RANKING"
+            />
+
+        <Button
+            android:id="@+id/btn_cheating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="CHEAT"
             />
 
     </LinearLayout>
