@@ -240,6 +240,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 ib_21.setClickable(true);
                 ib_22.setClickable(true);
 
+                // enable cheat button
+                btn_cheat.setEnabled(true);
+
                 // play a sound and release it when finished
                 buttonPlayer = MediaPlayer.create(MainActivity.this, R.raw.restart);
                 buttonPlayer.start();
@@ -483,6 +486,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             ib_21.setClickable(false);
             ib_22.setClickable(false);
 
+            // disable cheat button
+            btn_cheat.setEnabled(false);
+
             // hide the time
             puzzleTime.setVisibility(View.INVISIBLE);
 
@@ -502,6 +508,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
             builder.create();
             builder.show();
+
+            // upload the score to database
+            Utility.updateScore("Dennis", time);
 
         }
 
