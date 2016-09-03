@@ -8,11 +8,14 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/image1"
+            android:layout_marginLeft="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
@@ -20,9 +23,11 @@
 
         <TextView
             android:id="@+id/username1"
+            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="22sp"
+            android:layout_marginTop="17dp"
             android:layout_toRightOf="@+id/image1"/>
 
         <TextView
@@ -30,16 +35,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="22sp"
+            android:layout_marginTop="17dp"
             android:layout_toRightOf="@+id/username1"/>
 
     </RelativeLayout>
 
     <RelativeLayout
+        android:layout_marginBottom="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/image2"
+            android:layout_marginLeft="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
@@ -47,9 +55,11 @@
 
         <TextView
             android:id="@+id/username2"
+            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="22sp"
+            android:layout_marginTop="17dp"
             android:layout_toRightOf="@+id/image2"/>
 
         <TextView
@@ -57,16 +67,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="22sp"
+            android:layout_marginTop="17dp"
             android:layout_toRightOf="@+id/username2"/>
 
     </RelativeLayout>
 
     <RelativeLayout
+        android:layout_marginBottom="25dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/image3"
+            android:layout_marginLeft="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
@@ -74,9 +87,11 @@
 
         <TextView
             android:id="@+id/username3"
+            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="22sp"
+            android:layout_marginTop="17dp"
             android:layout_toRightOf="@+id/image3"/>
 
         <TextView
@@ -84,6 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="22sp"
+            android:layout_marginTop="17dp"
             android:layout_toRightOf="@+id/username3"/>
 
     </RelativeLayout>
