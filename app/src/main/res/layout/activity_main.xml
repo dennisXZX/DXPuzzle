@@ -18,7 +18,7 @@
             android:textSize="18sp"
             android:paddingTop="10dp"
             android:layout_alignParentLeft="true"
-            android:text="Sign in status" />
+            android:text=" " />
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"

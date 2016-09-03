@@ -1,10 +1,18 @@
 package com.dennisxiao.dxpuzzle;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Random;
 import android.app.AlertDialog;
@@ -30,7 +38,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 public class MainActivity extends AppCompatActivity implements OnClickListener, GoogleApiClient.OnConnectionFailedListener {
+
+    // the php page that handles ranking
+    private static final String JSON_URL = "http://www.dennisxiao.com/projects/dxpuzzle/dxpuzzle_checkranking.php";
 
     // create a local variable for identifying the class where the log statements come from
     private final static String LOG_TAG = MainActivity.class.getSimpleName();
@@ -255,7 +269,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         btn_ranking.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(LOG_TAG, "Ranking button is clicked.");
+
+                // get the JSON string from the php file
+                getJSON(JSON_URL);
             }
         });
 
@@ -509,12 +525,120 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             builder.create();
             builder.show();
 
+            // retrieve the user name
+            String username = mStatus.getText().toString();
+
+            if(username.equals(" ")){
+                username = "Player";
+            }
+
             // upload the score to database
-            Utility.updateScore("Dennis", time);
+            updateScore(username, time);
 
         }
 
     } // end of gameFinish()
+
+    // this method updates the player's score to database
+    private void updateScore(String playerName, int score){
+        Log.i(LOG_TAG, playerName + " " + score);
+    }
+
+    // this method get JSON from a php page
+    private void getJSON(String url) {
+
+        class GetJSON extends AsyncTask<String, Void, String> {
+
+            ProgressDialog loading;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loading = ProgressDialog.show(MainActivity.this, "Please Wait...", null, true, true);
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                String uri = params[0];
+
+                BufferedReader bufferedReader = null;
+
+                try {
+                    URL url = new URL(uri);
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    StringBuilder sb = new StringBuilder();
+
+                    bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+                    String json;
+                    while((json = bufferedReader.readLine())!= null){
+                        sb.append(json + "\n");
+                    }
+
+                    return sb.toString().trim();
+
+                }catch(Exception e){
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                loading.dismiss();
+
+                try {
+
+                    // create a JSONArray
+                    JSONArray array = new JSONArray(s);
+
+                    // extract the username and score from the JSONArray
+                    displayRanking(array.getJSONObject(0).getString("username"),
+                                   array.getJSONObject(0).getString("score"),
+                                   array.getJSONObject(1).getString("username"),
+                                   array.getJSONObject(1).getString("score"),
+                                   array.getJSONObject(2).getString("username"),
+                                   array.getJSONObject(2).getString("score"));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+        GetJSON gj = new GetJSON();
+        gj.execute(url);
+    }
+
+    // this method shows a dialog
+    private void displayRanking(String name1, String playerScore1,
+                                 String name2, String playerScore2,
+                                 String name3, String playerScore3){
+
+        // custom dialog
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.custom_dialog);
+        dialog.setTitle("Game Ranking");
+
+        // set the custom dialog components - text, image and button
+        TextView username1 = (TextView) dialog.findViewById(R.id.username1);
+        TextView score1 = (TextView) dialog.findViewById(R.id.score1);
+        TextView username2 = (TextView) dialog.findViewById(R.id.username2);
+        TextView score2 = (TextView) dialog.findViewById(R.id.score2);
+        TextView username3 = (TextView) dialog.findViewById(R.id.username3);
+        TextView score3 = (TextView) dialog.findViewById(R.id.score3);
+
+        username1.setText(name1 + " - ");
+        score1.setText(playerScore1);
+        username2.setText(name2 + " - ");
+        score2.setText(playerScore2);
+        username3.setText(name3 + " - ");
+        score3.setText(playerScore3);
+
+        dialog.show();
+    }
 
     @Override
     public void onClick(View v) {
@@ -544,7 +668,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                         findViewById(R.id.sign_out_button).setVisibility(View.GONE);
                         findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
 
-                        mStatus.setText("Bye!");
                     }
                 });
     }
@@ -554,7 +677,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            mStatus.setText("Welcome " + acct.getDisplayName());
+            mStatus.setText(acct.getDisplayName());
 
             // display the sign out button
             findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
