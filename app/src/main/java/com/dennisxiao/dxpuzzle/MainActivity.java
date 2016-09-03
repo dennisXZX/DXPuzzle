@@ -668,6 +668,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                         findViewById(R.id.sign_out_button).setVisibility(View.GONE);
                         findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
 
+                        // reset the sign in text
+                        mStatus.setText(" ");
+
                     }
                 });
     }
