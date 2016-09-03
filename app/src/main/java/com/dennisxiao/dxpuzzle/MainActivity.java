@@ -14,6 +14,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -28,6 +30,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -44,7 +53,8 @@ import org.json.JSONException;
 public class MainActivity extends AppCompatActivity implements OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     // the php page that handles ranking
-    private static final String JSON_URL = "http://www.dennisxiao.com/projects/dxpuzzle/dxpuzzle_checkranking.php";
+    private static final String PHP_URL_CHECK_RANKING = "http://www.dennisxiao.com/projects/dxpuzzle/dxpuzzle_checkranking.php";
+    private static final String PHP_URL_UPDATE_SCORE = "http://www.dennisxiao.com/projects/dxpuzzle/dxpuzzle_updatescore.php";
 
     // create a local variable for identifying the class where the log statements come from
     private final static String LOG_TAG = MainActivity.class.getSimpleName();
@@ -91,13 +101,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private int[] imageId = ImageGrid.getImageGrid();
 
     // initialize variables for recording time
-    private boolean timeRun = true;
+    private boolean timeRun;
 
     // record the time of the game
     private int time = 0;
 
     // keep track of if the game should finish
-    boolean gameFinish;
+    private boolean gameFinish;
 
     // create a thread to record time
     private Thread gameTimeThread = new Thread(){
@@ -271,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             public void onClick(View view) {
 
                 // get the JSON string from the php file
-                getJSON(JSON_URL);
+                getJSON(PHP_URL_CHECK_RANKING);
             }
         });
 
@@ -533,16 +543,45 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             }
 
             // upload the score to database
-            updateScore(username, time);
+            updateScore(username, Integer.toString(time));
 
         }
 
     } // end of gameFinish()
 
     // this method updates the player's score to database
-    private void updateScore(String playerName, int score){
-        Log.i(LOG_TAG, playerName + " " + score);
-    }
+    private void updateScore(final String playerName, final String score) {
+
+        // initialize a requestQuest
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest request = new StringRequest(Request.Method.POST, PHP_URL_UPDATE_SCORE, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                System.out.println(response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        })
+
+        // an inner class
+        {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> parameters  = new HashMap<String, String>();
+                parameters.put("username", playerName);
+                parameters.put("score", score);
+                return parameters;
+            }
+        };
+
+        requestQueue.add(request);
+
+    } // end of updateScore(final String playerName, final String score)
 
     // this method get JSON from a php page
     private void getJSON(String url) {
@@ -631,11 +670,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         TextView score3 = (TextView) dialog.findViewById(R.id.score3);
 
         username1.setText(name1 + " - ");
-        score1.setText(playerScore1);
+        score1.setText(playerScore1 + "s");
         username2.setText(name2 + " - ");
-        score2.setText(playerScore2);
+        score2.setText(playerScore2 + "s");
         username3.setText(name3 + " - ");
-        score3.setText(playerScore3);
+        score3.setText(playerScore3 + "s");
 
         dialog.show();
     }
