@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private int[] imageId = ImageGrid.getImageGrid();
 
     // initialize variables for recording time
-    private boolean timeRun;
+    private boolean timeRun = true;
 
     // record the time of the game
     private int time = 0;
@@ -659,7 +659,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         // custom dialog
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.custom_dialog);
-        dialog.setTitle("Game Ranking");
+        dialog.setTitle("DXPuzzle Ranking");
 
         // set the custom dialog components - text, image and button
         TextView username1 = (TextView) dialog.findViewById(R.id.username1);

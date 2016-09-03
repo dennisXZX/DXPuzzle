@@ -15,7 +15,7 @@
 
         <ImageView
             android:id="@+id/image1"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="25dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
@@ -26,16 +26,16 @@
             android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:layout_marginTop="17dp"
+            android:textSize="20sp"
+            android:layout_marginTop="7dp"
             android:layout_toRightOf="@+id/image1"/>
 
         <TextView
             android:id="@+id/score1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:layout_marginTop="17dp"
+            android:textSize="20sp"
+            android:layout_marginTop="7dp"
             android:layout_toRightOf="@+id/username1"/>
 
     </RelativeLayout>
@@ -47,7 +47,7 @@
 
         <ImageView
             android:id="@+id/image2"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="25dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
@@ -58,16 +58,16 @@
             android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:layout_marginTop="17dp"
+            android:textSize="20sp"
+            android:layout_marginTop="7dp"
             android:layout_toRightOf="@+id/image2"/>
 
         <TextView
             android:id="@+id/score2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:layout_marginTop="17dp"
+            android:textSize="20sp"
+            android:layout_marginTop="7dp"
             android:layout_toRightOf="@+id/username2"/>
 
     </RelativeLayout>
@@ -79,7 +79,7 @@
 
         <ImageView
             android:id="@+id/image3"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="25dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
@@ -90,16 +90,16 @@
             android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:layout_marginTop="17dp"
+            android:textSize="20sp"
+            android:layout_marginTop="7dp"
             android:layout_toRightOf="@+id/image3"/>
 
         <TextView
             android:id="@+id/score3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:layout_marginTop="17dp"
+            android:textSize="20sp"
+            android:layout_marginTop="7dp"
             android:layout_toRightOf="@+id/username3"/>
 
     </RelativeLayout>
