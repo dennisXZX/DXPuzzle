@@ -1,4 +1,4 @@
-package com.dennisxiao.dxpuzzle;
+package com.dennisxiao.dxpuzzle.Utility;
 
 import android.media.MediaPlayer;
 import android.util.Log;

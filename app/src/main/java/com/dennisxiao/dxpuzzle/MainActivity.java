@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -37,6 +38,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.dennisxiao.dxpuzzle.Utility.ImageGridConstant;
+import com.dennisxiao.dxpuzzle.Utility.Utility;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private static final int RC_SIGN_IN = 9001;
 
     // create an listener for the button mediaPlayer
-    private MediaPlayer.OnCompletionListener mCompletionListener =  new MediaPlayer.OnCompletionListener(){
+    private MediaPlayer.OnCompletionListener mCompletionListener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {
             Utility.releaseMediaResource(mediaPlayer);
@@ -78,8 +81,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     // ImageButton for displaying the puzzle image
     private ImageButton ib_00, ib_01, ib_02,
-                         ib_10, ib_11, ib_12,
-                         ib_20, ib_21, ib_22;
+            ib_10, ib_11, ib_12,
+            ib_20, ib_21, ib_22;
 
     // other resources
     private TextView puzzleTime;
@@ -89,16 +92,16 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     // initialize the width and height of the puzzle square
     private int squareWidth = 3;
     private int squareHeight = 3;
-    
+
     // initialize the blank position and the blank ImageButton id, by default the last grid is blank
     private int blankPos = 8;
     private int blankImgId = R.id.ib_02_02;
 
     // initialize an int array to store the order of the images
-    private int[] imageOrder = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    private int[] imageOrder = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8};
 
     // retrieve a random image
-    private int[] imageId = ImageGrid.getImageGrid();
+    private int[] imageId = ImageGridConstant.getImageGrid();
 
     // initialize variables for recording time
     private boolean timeRun = true;
@@ -110,11 +113,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private boolean gameFinish;
 
     // create a thread to record time
-    private Thread gameTimeThread = new Thread(){
+    private Thread gameTimeThread = new Thread() {
 
         public void run() {
 
-            while(true){
+            while (true) {
                 String strTime = time + "";
                 // create a Message instance
                 Message msg = Message.obtain();
@@ -136,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }; // end of Thread()
 
     // create a handler to handle displaying the time
-    private Handler mHandler = new Handler(){
+    private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             String time = (String) msg.obj;
             puzzleTime.setText("Timer: " + time);
@@ -150,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
         // Google sign in / sign out
         mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
-        mSignOutButton = (Button)findViewById(R.id.sign_out_button);
+        mSignOutButton = (Button) findViewById(R.id.sign_out_button);
         mStatus = (TextView) findViewById(R.id.sign_in_status);
         mSignInButton.setOnClickListener(this);
         mSignOutButton.setOnClickListener(this);
@@ -235,14 +238,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 puzzleTime.setVisibility(View.VISIBLE);
 
                 // get a random image
-                imageId = ImageGrid.getImageGrid();
+                imageId = ImageGridConstant.getImageGrid();
 
                 // reset the blank pos and blank image id
                 blankPos = 8;
                 blankImgId = R.id.ib_02_02;
 
                 // reset the image order
-                imageOrder = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
+                imageOrder = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8};
 
                 // reset the grid visibility
                 resetGridVisibility();
@@ -295,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 blankImgId = R.id.ib_02_02;
 
                 // reset the image order
-                imageOrder = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
+                imageOrder = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8};
 
                 // reset grid visibility
                 resetGridVisibility();
@@ -349,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      * swap clicked ImageView position for the blank view one
      *
      * @param clickImageBtnID the Id of the clicked button
-     * @param clickPos an int representing the position of the clicked button, ranging from 0 - 8
+     * @param clickPos        an int representing the position of the clicked button, ranging from 0 - 8
      */
     public void move(int clickImageBtnID, int clickPos) {
 
@@ -409,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             // check if the game is finished
             gameFinish();
 
-        }else { // alert the users if they are not clicking images next to the blank ImageButton
+        } else { // alert the users if they are not clicking images next to the blank ImageButton
 
             // play a sound and release it when finished
             buttonPlayer = MediaPlayer.create(MainActivity.this, R.raw.button_click_nomove);
@@ -434,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             ran2 = new Random().nextInt(8);
 
             // if the two random indices are different, swap them in imageOrder array
-            if(ran1 != ran2){
+            if (ran1 != ran2) {
                 swap(ran1, ran2);
             }
         } // end of for loop
@@ -454,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
 
     // this method resets all grids visibility
-    private void resetGridVisibility(){
+    private void resetGridVisibility() {
         ib_00.setVisibility(View.VISIBLE);
         ib_01.setVisibility(View.VISIBLE);
         ib_02.setVisibility(View.VISIBLE);
@@ -471,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
      *
      * @param imageId an int array holding all the images
      */
-    private void displayGrids(int[] imageId){
+    private void displayGrids(int[] imageId) {
         ib_00.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[0]], null));
         ib_01.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[1]], null));
         ib_02.setImageDrawable(ResourcesCompat.getDrawable(getResources(), imageId[imageOrder[2]], null));
@@ -487,17 +490,17 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private void gameFinish() {
 
         gameFinish = true;
-        
+
         // iterate through each grid to check if all the images are in the right places
-        for (int i=0; i<9; i++) {
-            if(imageOrder[i] != i){
+        for (int i = 0; i < 9; i++) {
+            if (imageOrder[i] != i) {
                 // if any of the image is not in the right place, the game continues
                 gameFinish = false;
             }
         }
-        
+
         // game is finished
-        if(gameFinish){
+        if (gameFinish) {
 
             timeRun = false;
 
@@ -538,7 +541,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             // retrieve the user name
             String username = mStatus.getText().toString();
 
-            if(username.equals(" ")){
+            if (username.equals(" ")) {
                 username = "Player";
             }
 
@@ -568,11 +571,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             }
         })
 
-        // an inner class
+                // an inner class
         {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> parameters  = new HashMap<String, String>();
+                Map<String, String> parameters = new HashMap<String, String>();
                 parameters.put("username", playerName);
                 parameters.put("score", score);
                 return parameters;
@@ -611,13 +614,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                     bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
                     String json;
-                    while((json = bufferedReader.readLine())!= null){
+                    while ((json = bufferedReader.readLine()) != null) {
                         sb.append(json + "\n");
                     }
 
                     return sb.toString().trim();
 
-                }catch(Exception e){
+                } catch (Exception e) {
                     return null;
                 }
             }
@@ -634,11 +637,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
                     // extract the username and score from the JSONArray
                     displayRanking(array.getJSONObject(0).getString("username"),
-                                   array.getJSONObject(0).getString("score"),
-                                   array.getJSONObject(1).getString("username"),
-                                   array.getJSONObject(1).getString("score"),
-                                   array.getJSONObject(2).getString("username"),
-                                   array.getJSONObject(2).getString("score"));
+                            array.getJSONObject(0).getString("score"),
+                            array.getJSONObject(1).getString("username"),
+                            array.getJSONObject(1).getString("score"),
+                            array.getJSONObject(2).getString("username"),
+                            array.getJSONObject(2).getString("score"));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -653,8 +656,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     // this method shows a dialog
     private void displayRanking(String name1, String playerScore1,
-                                 String name2, String playerScore2,
-                                 String name3, String playerScore3){
+                                String name2, String playerScore2,
+                                String name3, String playerScore3) {
 
         // custom dialog
         final Dialog dialog = new Dialog(this);

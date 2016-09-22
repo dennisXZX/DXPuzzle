@@ -7,9 +7,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Menu;
 
-public class Splash extends Activity {
+public class SplashActivity extends Activity {
 
     /** Duration of wait **/
     private final int SPLASH_DISPLAY_LENGTH = 1700;
@@ -20,12 +19,12 @@ public class Splash extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splashscreen);
 
-         /* New Handler to start the Splash activity
-         * and close this Splash-Screen after some seconds.*/
+         /* New Handler to start the SplashActivity activity
+         * and close this SplashActivity-Screen after some seconds.*/
         new Handler().postDelayed(new Runnable() {
             public void run() {
                 /* Create an Intent that will start the Main Activity. */
-                startActivity(new Intent(Splash.this, MainActivity.class));
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 finish();
             }
         }, SPLASH_DISPLAY_LENGTH);
