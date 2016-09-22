@@ -1,4 +1,4 @@
-package com.dennisxiao.dxpuzzle.Utility;
+package com.dennisxiao.dxpuzzle.Constant;
 
 import com.dennisxiao.dxpuzzle.R;
 
